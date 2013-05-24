@@ -1,0 +1,22 @@
+{
+    "modinfoversion": 2,
+    "modlist": [
+        {
+            "modid": "simplepowerstorage",
+            "name": "Simple Power Storage",
+            "description": "Simple early game power storage solutions",
+            "version": "1.0",
+            "mcversion": "1.5.2",
+            "url": "",
+            "updateUrl": "",
+            "authors": [
+                "sct"
+            ],
+            "credits": "By just sct",
+            "requiredMods": [
+                "Forge",
+                "BuildCraft"
+            ]
+        }
+    ]
+}
