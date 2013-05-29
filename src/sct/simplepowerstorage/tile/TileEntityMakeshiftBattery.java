@@ -1,10 +1,12 @@
 package sct.simplepowerstorage.tile;
 
+import java.util.logging.Level;
+
 import net.minecraft.tileentity.TileEntity;
-import sct.simplepowerstorage.core.BlockPosition;
+import net.minecraftforge.common.ForgeDirection;
+import sct.simplepowerstorage.SimplePowerStorage;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
-import buildcraft.energy.IEngineProvider;
 
 
 public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
@@ -43,37 +45,44 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 	
 	public final int producePower(int mj) {
 		
-		BlockPosition ourbp = BlockPosition.fromMachineTile(this);
+		ForgeDirection dir;
 		
-		for(BlockPosition bp : ourbp.getAdjacent(true))
+		if (getForwardDirection().equals(ForgeDirection.UP) || getForwardDirection().equals(ForgeDirection.DOWN)) {
+			dir = getForwardDirection();
+		} else {
+			dir = getForwardDirection().getOpposite();
+		}
+		
+		TileEntity te = worldObj.getBlockTileEntity(xCoord + dir.offsetX, 
+				yCoord + dir.offsetY, zCoord + dir.offsetZ);
+		
+		if(te == null || !(te instanceof IPowerReceptor))
 		{
-			TileEntity te = worldObj.getBlockTileEntity(bp.x, bp.y, bp.z);
-			if(te == null || !(te instanceof IPowerReceptor) || te instanceof IEngineProvider)
-			{
-				continue;
+			return mj;
+		}
+		
+		SimplePowerStorage.logger.log(Level.SEVERE, "Found receptor @ " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord);
+		
+		IPowerReceptor ipr = ((IPowerReceptor)te);
+		IPowerProvider pp = ipr.getPowerProvider();
+		if(pp != null && pp.preConditions(ipr) && pp.getMinEnergyReceived() <= mj)
+		{
+			int mjUsed = Math.min(Math.min(pp.getMaxEnergyReceived(), mj), pp.getMaxEnergyStored() - (int)Math.floor(pp.getEnergyStored()));
+			
+			if (te instanceof TileEntityMakeshiftBattery) {
+				if (((TileEntityMakeshiftBattery) te).getEnergyStored() < getEnergyStored()) {
+					setEnergyStored(getEnergyStored() - mjUsed);
+					pp.receiveEnergy(mjUsed, getForwardDirection());
+				}
+			} else {
+				setEnergyStored(getEnergyStored() - mjUsed);
+				pp.receiveEnergy(mjUsed, getForwardDirection());
 			}
 			
-			IPowerReceptor ipr = ((IPowerReceptor)te);
-			IPowerProvider pp = ipr.getPowerProvider();
-			if(pp != null && pp.preConditions(ipr) && pp.getMinEnergyReceived() <= mj)
+			mj -= mjUsed;
+			if(mj <= 0)
 			{
-				int mjUsed = Math.min(Math.min(pp.getMaxEnergyReceived(), mj), pp.getMaxEnergyStored() - (int)Math.floor(pp.getEnergyStored()));
-				
-				if (te instanceof TileEntityMakeshiftBattery) {
-					if (((TileEntityMakeshiftBattery) te).getEnergyStored() < getEnergyStored()) {
-						setEnergyStored(getEnergyStored() - mjUsed);
-						pp.receiveEnergy(mjUsed, bp.orientation);
-					}
-				} else {
-					setEnergyStored(getEnergyStored() - mjUsed);
-					pp.receiveEnergy(mjUsed, bp.orientation);
-				}
-				
-				mj -= mjUsed;
-				if(mj <= 0)
-				{
-					return 0;
-				}
+				return 0;
 			}
 		}
 		
@@ -98,6 +107,15 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 	@Override
 	public int getIdleTicksMax() {
 		return 0;
+	}
+	
+	@Override
+	public int powerRequest(ForgeDirection from) {
+		if (getForwardDirection().equals(from)) {
+			return 0;
+		}
+		
+		return super.powerRequest(from);
 	}
 	
 }

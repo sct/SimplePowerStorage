@@ -28,7 +28,7 @@ public abstract class TileEntityMachine extends TileEntity {
 	
 	public void rotate() {
 		if (!worldObj.isRemote) {
-			if (forwardDirection == ForgeDirection.NORTH) {
+			if (forwardDirection == ForgeDirection.DOWN) {
 				forwardDirection = ForgeDirection.EAST;
 			} else if (forwardDirection == ForgeDirection.EAST) {
 				forwardDirection = ForgeDirection.SOUTH;
@@ -36,6 +36,10 @@ public abstract class TileEntityMachine extends TileEntity {
 				forwardDirection = ForgeDirection.WEST;
 			} else if (forwardDirection == ForgeDirection.WEST){
 				forwardDirection = ForgeDirection.NORTH;
+			} else if (forwardDirection == ForgeDirection.NORTH) {
+				forwardDirection = ForgeDirection.UP;
+			} else if (forwardDirection == ForgeDirection.UP) {
+				forwardDirection = ForgeDirection.DOWN;
 			} else {
 				forwardDirection = ForgeDirection.NORTH;
 			}
@@ -63,8 +67,10 @@ public abstract class TileEntityMachine extends TileEntity {
 	public abstract int getIdleTicksMax();
 	
 	public int getRotatedSide(int side) {
-		if (side < 2) {
-			return side;
+		if (forwardDirection == ForgeDirection.UP) {
+			return verticalSide(side, true);
+		} else if (forwardDirection == ForgeDirection.DOWN) {
+			return verticalSide(side, false);
 		} else if (forwardDirection == ForgeDirection.EAST){
 			return addToSide(side, 1);
 		} else if (forwardDirection == ForgeDirection.SOUTH) {
@@ -88,6 +94,20 @@ public abstract class TileEntityMachine extends TileEntity {
 		}
 		
 		return out;
+	}
+	
+	private int verticalSide(int side, boolean up) {
+		if (side < 2) {
+			if (up) {
+				return side == 0 ? 2 : 3;
+			} else {
+				return side == 0 ? 3 : 2;
+			}
+		} else if (side == 3) {
+			return 0;
+		}
+		
+		return side;
 	}
 	
 	public ForgeDirection getForwardDirection() {
