@@ -1,3 +1,5 @@
 tile.sps.makeshiftbattery.name = Makeshift Battery
 
 item.sps.makeshiftconductance.name = Makeshift Conductance Coil
+item.sps.upgrade.tier1.name = Makeshift Upgrade Tier 1
+item.sps.upgrade.tier2.name = Makeshift Upgrade Tier 2

@@ -1,5 +1,7 @@
 package sct.simplepowerstorage.tile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -13,6 +15,7 @@ public abstract class TileEntityMachine extends TileEntity {
 	private ForgeDirection forwardDirection;
 	private boolean working = false;
 	private int idleTicks = 0;
+	private int tier = 0;
 	
 	public TileEntityMachine() {
 		forwardDirection = ForgeDirection.NORTH;
@@ -22,9 +25,9 @@ public abstract class TileEntityMachine extends TileEntity {
 		return forwardDirection;
 	}
 	
-	public boolean canRotate() {
-		return false;
-	}
+	public abstract boolean canRotate();
+	
+	public abstract boolean canUpgrade();
 	
 	public void rotate() {
 		if (!worldObj.isRemote) {
@@ -131,10 +134,37 @@ public abstract class TileEntityMachine extends TileEntity {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
+	public void upgrade(EntityPlayer player) {
+		ItemStack currentItem = player.inventory.getCurrentItem();
+		
+		if ((currentItem.getItemDamage() + 1) > getTier()) {
+			setTier(currentItem.getItemDamage() + 1);
+			player.destroyCurrentEquippedItem();
+		}
+	}
+	
+	public int getTier() {
+		return tier;
+	}
+	
+	public void setTier(int tier) {
+		if (worldObj != null && !worldObj.isRemote && this.tier != tier) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, 50, worldObj.provider.dimensionId, getDescriptionPacket());
+			this.tier = tier;
+		}
+	}
+	
+	public void setClientTier(int tier) {
+		this.tier = tier;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
 		rotateDirectlyTo(pkt.customParam1.getInteger("rotation"));
 		setClientWorking(pkt.customParam1.getBoolean("working"));
+		setClientTier(pkt.customParam1.getInteger("tier"));
 	}
 	
 	@Override
@@ -142,6 +172,7 @@ public abstract class TileEntityMachine extends TileEntity {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setInteger("rotation", getDirectionFacing().ordinal());
 		data.setBoolean("working", isWorking());
+		data.setInteger("tier", getTier());
 		Packet132TileEntityData packet = new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, data);
 		return packet;
 	}
@@ -151,7 +182,9 @@ public abstract class TileEntityMachine extends TileEntity {
 		super.readFromNBT(tagCompound);
 		
 		int rotation = tagCompound.getInteger("rotation");
+		int newTier = tagCompound.getInteger("tier");
 		rotateDirectlyTo(rotation);
+		this.tier = newTier;
 	}
 	
 	@Override
@@ -159,6 +192,7 @@ public abstract class TileEntityMachine extends TileEntity {
 		super.writeToNBT(tagCompound);
 		
 		tagCompound.setInteger("rotation", getDirectionFacing().ordinal());
+		tagCompound.setInteger("tier", getTier());
 	}
 
 }

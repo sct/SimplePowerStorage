@@ -34,6 +34,8 @@ public abstract class BlockMachine extends BlockContainer {
 		
 		if (SPSUtils.isHoldingTool(player) && ((TileEntityMachine) te).canRotate()) {
 			((TileEntityMachine) te).rotate();
+		} else if (SPSUtils.isHoldingUpgrade(player) && ((TileEntityMachine) te).canUpgrade()) {
+			((TileEntityMachine) te).upgrade(player);
 		} else {
 			player.openGui(SimplePowerStorage.instance, 0, world, x, y, z);
 		}

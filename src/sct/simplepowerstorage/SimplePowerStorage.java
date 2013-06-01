@@ -9,6 +9,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import sct.simplepowerstorage.block.BlockMakeshiftBattery;
 import sct.simplepowerstorage.gui.GuiHandler;
 import sct.simplepowerstorage.item.ItemMakeshiftConductanceCoil;
+import sct.simplepowerstorage.item.ItemMakeshiftUpgrade;
 import sct.simplepowerstorage.setup.SPSConfig;
 import sct.simplepowerstorage.tile.TileEntityMakeshiftBattery;
 import thermalexpansion.api.item.ItemRegistry;
@@ -45,6 +46,7 @@ public class SimplePowerStorage {
 	public static Block makeshiftBattery;
 	
 	public static Item makeshiftConductance;
+	public static Item makeshiftUpgrade;
 	
 	@PreInit
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -64,6 +66,7 @@ public class SimplePowerStorage {
 		if (Loader.isModLoaded("ThermalExpansion")) {
 			makeshiftConductance = new ItemMakeshiftConductanceCoil(SPSConfig.conductanceCoilId.getInt());
 		}
+		makeshiftUpgrade = new ItemMakeshiftUpgrade(25000);
 		
 		GameRegistry.registerBlock(makeshiftBattery, makeshiftBattery.getUnlocalizedName());
 		
@@ -77,7 +80,9 @@ public class SimplePowerStorage {
 		if (Loader.isModLoaded("ThermalExpansion")) {
 			ItemStack powerCoilGold = ItemRegistry.getItem("powerCoilGold", 1);
 			ItemStack powerCoilSilver = ItemRegistry.getItem("powerCoilSilver", 1);
+			ItemStack powerCoilElectrum = ItemRegistry.getItem("powerCoilElectrum", 1);
 			ItemStack machineFrame = ItemRegistry.getItem("machineFrame", 1);
+			ItemStack servo = ItemRegistry.getItem("pneumaticServo", 1);
 			
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(makeshiftConductance), new Object[]
 					{
@@ -98,6 +103,30 @@ public class SimplePowerStorage {
 					'C', "ingotCopper",
 					'M', machineFrame,
 					'X', makeshiftConductance
+					}));
+			
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(makeshiftUpgrade, 1, 0), new Object[]
+					{
+					" C ",
+					"IPI",
+					"SOS",
+					'C', "ingotCopper",
+					'I', "ingotIron",
+					'P', servo,
+					'S', "ingotSilver",
+					'O', powerCoilElectrum
+					}));
+			
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(makeshiftUpgrade, 1, 1), new Object[]
+					{
+					" I ",
+					"IPI",
+					"GOG",
+					'C', "ingotCopper",
+					'I', "ingotInvar",
+					'P', servo,
+					'G', "ingotGold",
+					'O', powerCoilElectrum
 					}));
 		} else {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(makeshiftBattery), new Object[]

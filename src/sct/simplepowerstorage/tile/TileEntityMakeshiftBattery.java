@@ -1,10 +1,7 @@
 package sct.simplepowerstorage.tile;
 
-import java.util.logging.Level;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import sct.simplepowerstorage.SimplePowerStorage;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 
@@ -17,7 +14,7 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 	private int ticksSinceLastConsumption = 0;
 
 	public TileEntityMakeshiftBattery() {
-		super(50);
+		super(100);
 	}
 	
 	@Override
@@ -61,8 +58,6 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 			return mj;
 		}
 		
-		SimplePowerStorage.logger.log(Level.SEVERE, "Found receptor @ " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord);
-		
 		IPowerReceptor ipr = ((IPowerReceptor)te);
 		IPowerProvider pp = ipr.getPowerProvider();
 		if(pp != null && pp.preConditions(ipr) && pp.getMinEnergyReceived() <= mj)
@@ -101,7 +96,14 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 
 	@Override
 	public int getEnergyStoredMax() {
-		return 10000;
+		switch (getTier()) {
+			case 1:
+				return 35000;
+			case 2:
+				return 80000;
+			default:
+				return 10000;
+		}
 	}
 
 	@Override
@@ -111,11 +113,16 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 	
 	@Override
 	public int powerRequest(ForgeDirection from) {
-		if (getForwardDirection().equals(from)) {
+		if (getForwardDirection().getOpposite().equals(from)) {
 			return 0;
 		}
 		
 		return super.powerRequest(from);
+	}
+
+	@Override
+	public boolean canUpgrade() {
+		return true;
 	}
 	
 }

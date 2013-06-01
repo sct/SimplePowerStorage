@@ -14,6 +14,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockMakeshiftBattery extends BlockMachine {
 	
 	private Icon[] icons = new Icon[6];
+	private Icon[] iconsTierOne = new Icon[6];
+	private Icon[] iconsTierTwo = new Icon[6];
 
 	public BlockMakeshiftBattery(int id) {
 		super(id);
@@ -31,18 +33,44 @@ public class BlockMakeshiftBattery extends BlockMachine {
 		icons[3] = ir.registerIcon(getUnlocalizedName() + ".front");
 		icons[4] = ir.registerIcon(getUnlocalizedName() + ".left");
 		icons[5] = ir.registerIcon(getUnlocalizedName() + ".right");
+		
+		iconsTierOne[0] = ir.registerIcon(getUnlocalizedName() + ".1.bottom");
+		iconsTierOne[1] = ir.registerIcon(getUnlocalizedName() + ".1.bottom");
+		iconsTierOne[2] = ir.registerIcon(getUnlocalizedName() + ".1.side");
+		iconsTierOne[3] = ir.registerIcon(getUnlocalizedName() + ".1.front");
+		iconsTierOne[4] = ir.registerIcon(getUnlocalizedName() + ".1.side");
+		iconsTierOne[5] = ir.registerIcon(getUnlocalizedName() + ".1.side");
+		
+		iconsTierTwo[0] = ir.registerIcon(getUnlocalizedName() + ".2.bottom");
+		iconsTierTwo[1] = ir.registerIcon(getUnlocalizedName() + ".2.bottom");
+		iconsTierTwo[2] = ir.registerIcon(getUnlocalizedName() + ".2.side");
+		iconsTierTwo[3] = ir.registerIcon(getUnlocalizedName() + ".2.front");
+		iconsTierTwo[4] = ir.registerIcon(getUnlocalizedName() + ".2.side");
+		iconsTierTwo[5] = ir.registerIcon(getUnlocalizedName() + ".2.side");
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getBlockTexture(IBlockAccess iBlockAccess, int x,
 			int y, int z, int side) {
-		int md = iBlockAccess.getBlockMetadata(x, y, z);
+		
 		TileEntity te = iBlockAccess.getBlockTileEntity(x, y, z);
 		if (te instanceof TileEntityMachine) {
 			side = ((TileEntityMachine) te).getRotatedSide(side);
 		}
-		return this.getIcon(side, md);
+		return this.getIconTier(side, ((TileEntityMachine) te).getTier());
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public Icon getIconTier(int side, int tier) {
+		switch (tier) {
+			case 1:
+				return iconsTierOne[side];
+			case 2:
+				return iconsTierTwo[side];
+			default:
+				return icons[side];
+		}
 	}
 	
 	@Override
