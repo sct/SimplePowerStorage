@@ -139,7 +139,12 @@ public abstract class TileEntityMachine extends TileEntity {
 		
 		if ((currentItem.getItemDamage() + 1) > getTier()) {
 			setTier(currentItem.getItemDamage() + 1);
-			player.destroyCurrentEquippedItem();
+			
+			if (currentItem.stackSize > 1) {
+				currentItem.stackSize--;
+			} else {
+				player.destroyCurrentEquippedItem();
+			}
 		}
 	}
 	
