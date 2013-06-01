@@ -23,6 +23,7 @@ public class SPSConfig {
 	
 	public static Property makeshiftBatteryId;
 	public static Property conductanceCoilId;
+	public static Property makeshiftUpgradeId;
 	
 	public static File configFolder;
 	
@@ -34,6 +35,7 @@ public class SPSConfig {
 			
 			makeshiftBatteryId = c.getBlock("ID.MakeshiftBattery", 2400);
 			conductanceCoilId = c.getItem(Configuration.CATEGORY_ITEM, "ID.ConductanceCoil", 23200);
+			makeshiftUpgradeId = c.getItem(Configuration.CATEGORY_ITEM, "ID.MakeshiftUpgrade", 23201);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

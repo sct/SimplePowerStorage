@@ -66,7 +66,7 @@ public class SimplePowerStorage {
 		if (Loader.isModLoaded("ThermalExpansion")) {
 			makeshiftConductance = new ItemMakeshiftConductanceCoil(SPSConfig.conductanceCoilId.getInt());
 		}
-		makeshiftUpgrade = new ItemMakeshiftUpgrade(25000);
+		makeshiftUpgrade = new ItemMakeshiftUpgrade(SPSConfig.makeshiftUpgradeId.getInt());
 		
 		GameRegistry.registerBlock(makeshiftBattery, makeshiftBattery.getUnlocalizedName());
 		
