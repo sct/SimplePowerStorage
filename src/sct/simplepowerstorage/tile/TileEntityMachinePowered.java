@@ -2,7 +2,7 @@ package sct.simplepowerstorage.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
-import sct.simplepowerstorage.core.PowerProviderAdvanced;
+import sct.simplepowerstorage.power.PowerProviderAdvanced;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.IPowerReceptor;
 
@@ -19,7 +19,7 @@ public abstract class TileEntityMachinePowered extends TileEntityMachineInventor
 	protected TileEntityMachinePowered(int energyCostMJ) {
 		this.energyCost = energyCostMJ;
 		powerProvider = new PowerProviderAdvanced();
-		powerProvider.configure(10, 10, 200, 1, 10000);
+		powerProvider.configure(10, 10, 200, 1, 100);
 	}
 	
 	@Override

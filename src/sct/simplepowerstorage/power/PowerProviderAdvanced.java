@@ -1,4 +1,4 @@
-package sct.simplepowerstorage.core;
+package sct.simplepowerstorage.power;
 
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;

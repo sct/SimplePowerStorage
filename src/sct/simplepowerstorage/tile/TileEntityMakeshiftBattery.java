@@ -14,7 +14,7 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 	private int ticksSinceLastConsumption = 0;
 
 	public TileEntityMakeshiftBattery() {
-		super(100);
+		super(1);
 	}
 	
 	@Override
@@ -29,7 +29,6 @@ public class TileEntityMakeshiftBattery extends TileEntityMachinePowered {
 				if(ticksSinceLastConsumption < ticksBetweenConsumption)
 				{
 					ticksSinceLastConsumption++;
-					return;
 				}
 				ticksSinceLastConsumption = 0;
 				
